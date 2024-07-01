@@ -106,6 +106,7 @@ Match the target key in the fastest time you can!""")
 
     while True:
         input("Hit enter to start.")
+        os.system('cls' if os.name == 'nt' else 'clear')
 
         # Play the reflex challenge and get the reaction time
         elapsedTime = reflexChallenge()
