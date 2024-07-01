@@ -1,5 +1,4 @@
 import random
-import datetime
 import time
 import keyboard
 
@@ -10,9 +9,10 @@ def randomCountdown():
     timers = [2, 3, 4, 5]
     t = random.choice(timers)
     while t > 0:
-        print(f"{t // 60:02}:{t % 60:02}", end="\r")  # display minutes and seconds
+        print(f"Countdown: {t // 60:02}:{t % 60:02}", end="\r")  # display minutes and seconds
         time.sleep(1)  # wait for 1 second
         t -= 1
+    print("Countdown done")
 
 def on_key_event(event):
     global matchTarget, startTime
@@ -24,27 +24,33 @@ def on_key_event(event):
             elapsedTime = endTime - startTime
             print(f"Reaction time: {elapsedTime:.2f} seconds")
 
-
 def reflexChallenge():
     keys = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
-    targetKey = random.choice(keys)
-    print(targetKey)
+    
+    # Perform countdown before selecting target key
     randomCountdown()
-    startTime = time.time() # start timer
-    matchTarget = input("Enter the target: ")
+    
+    targetKey = random.choice(keys)
+    print(f"Target key: {targetKey}")
+    
+    global startTime, matchTarget
+    startTime = time.time()  # start timer
+    matchTarget = None
     while True:
         if matchTarget is None:
+            # Listen for the first key press only
             event = keyboard.read_event(suppress=True)
             if event.event_type == keyboard.KEY_DOWN:
                 matchTarget = event.name.upper()
-                keyboard.on.press(on_key_event)
-                
-        if matchTarget.upper() == targetKey:
-            endTime = time.time() # stop timer
-            elapsedTime = endTime - startTime
-            print(f"Reaction time: {elapsedTime:.2f} seconds")
-            break
+                keyboard.on_press(on_key_event)
         else:
-            matchTarget = input("Wrong input. Please enter the target key: ")
+            if matchTarget.upper() == targetKey:
+                endTime = time.time()  # stop timer
+                elapsedTime = endTime - startTime
+                print(f"Reaction time: {elapsedTime:.2f} seconds")
+                break
+            else:
+                matchTarget = None  # Reset matchTarget to listen for the next key press
 
+# Start the reflex challenge
 reflexChallenge()
